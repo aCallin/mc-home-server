@@ -25,7 +25,7 @@
 #define HANDLE_ERROR(message) { perror(message); return errno; }
 #define LOG(message) { printf("[%s] %s\n", timestamp(), message); }
 
-char *timestamp() {
+static char *timestamp() {
     static time_t calendar_time;
     static struct tm *calendar_time_components;
     static char timestamp_without_newline[25];
