@@ -12,4 +12,4 @@ run: all
 
 .PHONY: clean
 clean:
-	rm -f $(OUT) temp status.html
+	rm -f $(OUT)

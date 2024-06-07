@@ -21,7 +21,7 @@
 #include <unistd.h>
 
 #define LISTEN_BACKLOG 10
-#define STATUS_FILE_NAME "status.html"
+#define STATUS_FILE_NAME "/tmp/mc-home-server/heartbeat-status.html"
 #define HANDLE_ERROR(message) { perror(message); return errno; }
 #define LOG(message) { printf("[%s] %s\n", timestamp(), message); }
 
@@ -65,19 +65,20 @@ int main(int argc, char *argv[]) {
             HANDLE_ERROR("Failed to accept client")
         LOG("Accepted client")
         // Unfortunately define constants (ex. STATUS_FILE_NAME) won't work here
-        system("echo '<pre>' > temp");
-        system("date >> temp");
-        system("uptime -p >> temp");
-        system("echo >> temp");
-        system("free -h >> temp");
-        system("echo >> temp");
-        system("top -b -n 1 >> temp");
-        system("echo '</pre>' >> temp");
-        system("echo 'HTTP/1.0 200 OK' > status.html");
-        system("echo 'Content-Type: text/html' >> status.html");
-        system("echo \"Content-Length: $(wc -c < temp)\" >> status.html");
-        system("echo >> status.html");
-        system("cat temp >> status.html");
+        system("mkdir -p /tmp/mc-home-server/");
+        system("echo '<pre>' > /tmp/mc-home-server/heartbeat-temp");
+        system("date >> /tmp/mc-home-server/heartbeat-temp");
+        system("uptime -p >> /tmp/mc-home-server/heartbeat-temp");
+        system("echo >> /tmp/mc-home-server/heartbeat-temp");
+        system("free -h >> /tmp/mc-home-server/heartbeat-temp");
+        system("echo >> /tmp/mc-home-server/heartbeat-temp");
+        system("top -b -n 1 >> /tmp/mc-home-server/heartbeat-temp");
+        system("echo '</pre>' >> /tmp/mc-home-server/heartbeat-temp");
+        system("echo 'HTTP/1.0 200 OK' > /tmp/mc-home-server/heartbeat-status.html");
+        system("echo 'Content-Type: text/html' >> /tmp/mc-home-server/heartbeat-status.html");
+        system("echo \"Content-Length: $(wc -c < /tmp/mc-home-server/heartbeat-temp)\" >> /tmp/mc-home-server/heartbeat-status.html");
+        system("echo >> /tmp/mc-home-server/heartbeat-status.html");
+        system("cat /tmp/mc-home-server/heartbeat-temp >> /tmp/mc-home-server/heartbeat-status.html");
         const int status_file_fd = open(STATUS_FILE_NAME, O_RDONLY);
         if (status_file_fd == -1)
             HANDLE_ERROR("Failed to open status file")
