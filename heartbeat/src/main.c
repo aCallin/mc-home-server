@@ -58,27 +58,35 @@ int main(int argc, char *argv[]) {
         HANDLE_ERROR("Failed to listen for connections")
     LOG("Listening for clients...")
 
-    // Loop: accept client, update (via shell) + open + send + close status file, close client
+    // Bash commands to create status file
+    const char *const bash_commands[] = {
+        "mkdir -p /tmp/mc-home-server/",
+        "echo '<pre>' > /tmp/mc-home-server/heartbeat-temp",
+        "date >> /tmp/mc-home-server/heartbeat-temp",
+        "uptime -p >> /tmp/mc-home-server/heartbeat-temp",
+        "echo >> /tmp/mc-home-server/heartbeat-temp",
+        "free -h >> /tmp/mc-home-server/heartbeat-temp",
+        "echo >> /tmp/mc-home-server/heartbeat-temp",
+        "top -b -n 1 >> /tmp/mc-home-server/heartbeat-temp",
+        "echo '</pre>' >> /tmp/mc-home-server/heartbeat-temp",
+        "echo 'HTTP/1.0 200 OK' > /tmp/mc-home-server/heartbeat-status.html",
+        "echo 'Content-Type: text/html' >> /tmp/mc-home-server/heartbeat-status.html",
+        "echo \"Content-Length: $(wc -c < /tmp/mc-home-server/heartbeat-temp)\" >> /tmp/mc-home-server/heartbeat-status.html",
+        "echo >> /tmp/mc-home-server/heartbeat-status.html",
+        "cat /tmp/mc-home-server/heartbeat-temp >> /tmp/mc-home-server/heartbeat-status.html"
+    };
+    const int bash_commands_length = sizeof(bash_commands) / sizeof(bash_commands[0]);
+
+    // Loop: accept client, run bash commands to create status file, open + send + close status file, close client
     while (1) {
         const int connected_socket_fd = accept(listening_socket_fd, 0, 0);
         if (connected_socket_fd == -1)
             HANDLE_ERROR("Failed to accept client")
         LOG("Accepted client")
-        // Unfortunately define constants (ex. STATUS_FILE_NAME) won't work here
-        system("mkdir -p /tmp/mc-home-server/");
-        system("echo '<pre>' > /tmp/mc-home-server/heartbeat-temp");
-        system("date >> /tmp/mc-home-server/heartbeat-temp");
-        system("uptime -p >> /tmp/mc-home-server/heartbeat-temp");
-        system("echo >> /tmp/mc-home-server/heartbeat-temp");
-        system("free -h >> /tmp/mc-home-server/heartbeat-temp");
-        system("echo >> /tmp/mc-home-server/heartbeat-temp");
-        system("top -b -n 1 >> /tmp/mc-home-server/heartbeat-temp");
-        system("echo '</pre>' >> /tmp/mc-home-server/heartbeat-temp");
-        system("echo 'HTTP/1.0 200 OK' > /tmp/mc-home-server/heartbeat-status.html");
-        system("echo 'Content-Type: text/html' >> /tmp/mc-home-server/heartbeat-status.html");
-        system("echo \"Content-Length: $(wc -c < /tmp/mc-home-server/heartbeat-temp)\" >> /tmp/mc-home-server/heartbeat-status.html");
-        system("echo >> /tmp/mc-home-server/heartbeat-status.html");
-        system("cat /tmp/mc-home-server/heartbeat-temp >> /tmp/mc-home-server/heartbeat-status.html");
+        for (int i = 0; i < bash_commands_length; i++) {
+            if (system(bash_commands[i]) == -1)
+                HANDLE_ERROR("Bash command failed")
+        }
         const int status_file_fd = open(STATUS_FILE_NAME, O_RDONLY);
         if (status_file_fd == -1)
             HANDLE_ERROR("Failed to open status file")
