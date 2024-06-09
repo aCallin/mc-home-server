@@ -5,10 +5,14 @@
 #include <sys/sysinfo.h>
 #include <unistd.h>
 
-#define RESTART_TIME (120 * 60) // TODO: change to more reasonable number
+#define HEARTBEAT_SCREEN_NAME "mc-home-server-heartbeat"
+#define MINECRAFT_SERVER_SCREEN_NAME "mc-home-server-minecraft-server"
+#define CHAR_BUFFER_SIZE 200
+#define RESTART_TIME (60 * 60) // TODO: change to more reasonable number
 #define HANDLE_ERROR(message) { perror(message); return errno; }
 
 int main(int argc, char *argv[]) {
+    // Times at which to send warnings to the minecraft server about the server restarting
     const int warning_times[] = {
         60 * 60,
         30 * 60,
@@ -20,6 +24,10 @@ int main(int argc, char *argv[]) {
     int has_warned[warning_time_size];
     memset(has_warned, 0, warning_time_size * sizeof(has_warned[0]));
 
+    // For formatted strings
+    char char_buffer[CHAR_BUFFER_SIZE];
+
+    // Loop: get uptime, warn if uptime exceedes warning time, break if uptime exceedes restart time or sleep 5 seconds otherwise
     struct sysinfo system_info;
     while (1) {
         if (sysinfo(&system_info) == -1)
@@ -27,9 +35,9 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < warning_time_size; i++) {
             if (has_warned[i] == 0 && warning_times[i] >= RESTART_TIME - system_info.uptime) {
                 printf("Warning: the server will restart in %d minutes\n", warning_times[i] / 60);
-
-                // TODO: message to minecraft server code here
-
+                snprintf(char_buffer, CHAR_BUFFER_SIZE, "screen -S %s -p 0 -X stuff \"say Warning: the server will restart in %d minutes^M\"", MINECRAFT_SERVER_SCREEN_NAME, warning_times[0] / 60);
+                if (system(char_buffer) == -1)
+                    HANDLE_ERROR("Warning bash command failed")
                 has_warned[i] = 1;
             }
         }
@@ -38,8 +46,30 @@ int main(int argc, char *argv[]) {
         sleep(5);
     }
 
-    // TODO: shutdown minecraft server code here
+    // Shut down heartbeat screen
+    printf("Shutting down heartbeat screen\n");
+    snprintf(char_buffer, CHAR_BUFFER_SIZE, "screen -S %s -p 0 -X stuff \"^C\"", HEARTBEAT_SCREEN_NAME);
+    if (system(char_buffer) == -1)
+        HANDLE_ERROR("Shut down heartbeat screen command failed")
 
+    // Shut down minecraft server screen
+    printf("Shutting down minecraft server screen\n");
+    snprintf(char_buffer, CHAR_BUFFER_SIZE, "screen -S %s -p 0 -X stuff \"stop^M\"", MINECRAFT_SERVER_SCREEN_NAME);
+    if (system(char_buffer) == -1)
+        HANDLE_ERROR("Stop minecraft server command failed")
+    snprintf(char_buffer, CHAR_BUFFER_SIZE, "screen -ls | grep -q \"%s\"", HEARTBEAT_SCREEN_NAME);
+    while (1) {
+        const int grep_exit_code = system(char_buffer);
+        if (grep_exit_code == -1)
+            HANDLE_ERROR("grep command failed");
+        if (grep_exit_code == 0)
+            sleep(1);
+        else
+            break;
+    }
+
+    // Restart
+    printf("Restarting\n");
     if (system("shutdown -r now") == -1)
         HANDLE_ERROR("Restart bash command failed")
 }
