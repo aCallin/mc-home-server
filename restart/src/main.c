@@ -8,7 +8,7 @@
 #define HEARTBEAT_SCREEN_NAME "heartbeat"
 #define MINECRAFT_SCREEN_NAME "minecraft"
 #define CHAR_BUFFER_SIZE 200
-#define RESTART_TIME (60 * 60) // TODO: change to more reasonable number
+#define RESTART_TIME (6 * 60 * 60)
 #define HANDLE_ERROR(message) { perror(message); return errno; }
 
 int main(int argc, char *argv[]) {
