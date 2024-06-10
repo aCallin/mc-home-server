@@ -1,5 +1,5 @@
 CC = gcc
-SRC = src/*.c
+SRC = *.c
 OUT = restart.out
 
 .PHONY: all

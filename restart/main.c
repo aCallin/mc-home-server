@@ -12,6 +12,8 @@
 #define HANDLE_ERROR(message) { perror(message); return errno; }
 
 int main(int argc, char *argv[]) {
+    printf("Restart time set for: %d hour(s) and %d minute(s)\n", RESTART_TIME / 3600, (RESTART_TIME - (RESTART_TIME / 3600) * 3600) / 60);
+
     // Times at which to send warnings to the minecraft server about the server restarting
     const int warning_times[] = {
         60 * 60,
@@ -34,8 +36,8 @@ int main(int argc, char *argv[]) {
             HANDLE_ERROR("Failed to get system info")
         for (int i = 0; i < warning_time_size; i++) {
             if (has_warned[i] == 0 && warning_times[i] >= RESTART_TIME - system_info.uptime) {
-                printf("Warning: the server will restart in %d minutes\n", warning_times[i] / 60);
-                snprintf(char_buffer, CHAR_BUFFER_SIZE, "screen -S %s -p 0 -X stuff \"say Warning: the server will restart in %d minutes^M\"", MINECRAFT_SCREEN_NAME, warning_times[i] / 60);
+                printf("Warning: the server will restart in %d minute(s)\n", warning_times[i] / 60);
+                snprintf(char_buffer, CHAR_BUFFER_SIZE, "screen -S %s -p 0 -X stuff \"say Warning: the server will restart in %d minute(s)^M\"", MINECRAFT_SCREEN_NAME, warning_times[i] / 60);
                 if (system(char_buffer) == -1)
                     HANDLE_ERROR("Warning bash command failed")
                 has_warned[i] = 1;

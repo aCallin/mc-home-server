@@ -1,11 +1,3 @@
-/**
- * Recommended usage:
- * Run on a device set up with a static IP
- * Bookmark http://ip:port on client devices
- * Refresh whenever you need
- * Close with Ctrl-C or other interrupt
-*/
-
 #include <arpa/inet.h>
 #include <errno.h>
 #include <fcntl.h>

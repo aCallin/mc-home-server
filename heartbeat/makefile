@@ -1,5 +1,5 @@
 CC = gcc
-SRC = src/*.c
+SRC = *.c
 OUT = heartbeat.out
 
 .PHONY: all
