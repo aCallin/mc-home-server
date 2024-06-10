@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < warning_time_size; i++) {
             if (has_warned[i] == 0 && warning_times[i] >= RESTART_TIME - system_info.uptime) {
                 printf("Warning: the server will restart in %d minutes\n", warning_times[i] / 60);
-                snprintf(char_buffer, CHAR_BUFFER_SIZE, "screen -S %s -p 0 -X stuff \"say Warning: the server will restart in %d minutes^M\"", MINECRAFT_SCREEN_NAME, warning_times[0] / 60);
+                snprintf(char_buffer, CHAR_BUFFER_SIZE, "screen -S %s -p 0 -X stuff \"say Warning: the server will restart in %d minutes^M\"", MINECRAFT_SCREEN_NAME, warning_times[i] / 60);
                 if (system(char_buffer) == -1)
                     HANDLE_ERROR("Warning bash command failed")
                 has_warned[i] = 1;
