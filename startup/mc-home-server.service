@@ -1,0 +1,9 @@
+[Unit]
+Description=Minecraft Home Server
+
+[Service]
+ExecStart=/usr/local/sbin/mc-home-server/startup/startup.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
