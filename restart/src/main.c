@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
     snprintf(char_buffer, CHAR_BUFFER_SIZE, "screen -S %s -p 0 -X stuff \"stop^M\"", MINECRAFT_SCREEN_NAME);
     if (system(char_buffer) == -1)
         HANDLE_ERROR("Stop minecraft server command failed")
-    snprintf(char_buffer, CHAR_BUFFER_SIZE, "screen -ls | grep -q \"%s\"", HEARTBEAT_SCREEN_NAME);
+    snprintf(char_buffer, CHAR_BUFFER_SIZE, "screen -ls | grep -q \"%s\"", MINECRAFT_SCREEN_NAME);
     while (1) {
         const int grep_exit_code = system(char_buffer);
         if (grep_exit_code == -1)
