@@ -2,7 +2,8 @@
 Description=Minecraft Home Server
 
 [Service]
-ExecStart=/usr/local/sbin/mc-home-server/startup/startup.sh
+ExecStart=/usr/local/sbin/mc-home-server/start.sh
+ExecStop=/usr/local/sbin/mc-home-server/stop.sh
 RemainAfterExit=yes
 
 [Install]
