@@ -23,7 +23,7 @@ RESTART_TIME_HOURS=`expr $RESTART_TIME / 60`
 RESTART_TIME_HOURS_SUB=`expr $RESTART_TIME_HOURS \* 60`
 RESTART_TIME_MINUTES=`expr $RESTART_TIME - $RESTART_TIME_HOURS_SUB`
 date
-echo "Restart time: $RESTART_TIME minutes, or $RESTART_TIME_HOURS hour(s) and $RESTART_TIME_MINUTES minute(s) from now"
+echo "Restart time: $RESTART_TIME minutes, or $RESTART_TIME_HOURS hour(s) and $RESTART_TIME_MINUTES minute(s) from uptime"
 
 # Sleep until next warning time
 M=m
@@ -41,11 +41,28 @@ do
 done
 UPTIME=`awk '{print int($1/60)}' /proc/uptime`
 SLEEP_TIME=`expr $RESTART_TIME - $UPTIME`
-sleep $SLEEP_TIME
+sleep $SLEEP_TIME$M
 
-# Stop mc-home-server and restart
-echo "Stopping mc-home-server"
-systemctl stop "mc-home-server"
-./usr/local/sbin/stop.sh # Just in case the service doesn't exist
+# Stop heartbeat and mc-home-server screens
+HEARTBEAT_SCREEN_NAME=heartbeat
+echo "Shutting down $HEARTBEAT_SCREEN_NAME screen"
+screen -S $HEARTBEAT_SCREEN_NAME -p 0 -X stuff "^C" > /dev/null
+screen -S $HEARTBEAT_SCREEN_NAME -Q select . > /dev/null
+if [ $? -eq 0 ]
+then
+	echo "$HEARTBEAT_SCREEN_NAME screen did not shut down"
+fi
+MINECRAFT_SCREEN_NAME=minecraft
+echo "Shutting down $MINECRAFT_SCREEN_NAME screen"
+screen -S $MINECRAFT_SCREEN_NAME -p 0 -X stuff "stop^M" > /dev/null
+screen -S $MINECRAFT_SCREEN_NAME -Q select . > /dev/null
+while [ $? -eq 0 ]
+do
+	sleep 1
+	echo "In progress"
+	screen -S $MINECRAFT_SCREEN_NAME -Q select . > /dev/null
+done
+
+# Restart
 echo "Restarting"
 shutdown -r now
