@@ -39,5 +39,8 @@ do
 	screen -S $MINECRAFT_SCREEN_NAME -Q select . > /dev/null
 done
 
+# Create / remove backups
+./backup.sh
+
 # Done
 echo "Done"
