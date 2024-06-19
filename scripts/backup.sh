@@ -9,13 +9,13 @@ fi
 
 # Constants
 NUM_BACKUPS=30
-BACKUPS_FOLDER=../world-backups/
+BACKUPS_FOLDER=/usr/local/sbin/mc-home-server/world-backups/
 
 # Make the backup
 mkdir -p $BACKUPS_FOLDER
 NEW_BACKUP_NAME=`date | awk '{print $1"-"$2"-"$3"-"$4}'`
 rm -rf $BACKUPS_FOLDER$NEW_BACKUP_NAME
-cp -r ../minecraft/world/ $BACKUPS_FOLDER$NEW_BACKUP_NAME
+cp -r /usr/local/sbin/mc-home-server/minecraft/world/ $BACKUPS_FOLDER$NEW_BACKUP_NAME
 echo "Created new backup: $NEW_BACKUP_NAME"
 
 # Remove old backups (> NUM_BACKUPS ago)

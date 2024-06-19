@@ -64,7 +64,7 @@ do
 done
 
 # Create / remove backups
-./backup.sh
+/usr/local/sbin/mc-home-server/scripts/backup.sh
 
 # Restart
 echo "Restarting"

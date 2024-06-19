@@ -40,7 +40,7 @@ do
 done
 
 # Create / remove backups
-./backup.sh
+/usr/local/sbin/mc-home-server/scripts/backup.sh
 
 # Done
 echo "Done"
