@@ -2,9 +2,16 @@
 Tools for hosting a Minecraft server at home.
 
 ## About
-At its core, hosting a Minecraft server is relatively easy. However, more work is required if the server is to be set up with automatic restarts and backups, as well as a site to query the server's status. Luckily, all of this can be handled with a few shell scripts, some C programming, and a systemd service.
+At its core, hosting a Minecraft server is relatively easy. However, more work is required if the server is to be set up with automatic restarts and backups, as well as a site to query the server's status. All of this can be handled with a few shell scripts, some C programming, and a systemd service, and results in a hands-off server experience.  
+
+Tools overview:
+- _Heartbeat_: a heartbeat program that allows clients to query the server's status over the web. Serves information such as CPU and memory usage, uptime, and date of query. Can be easily modified to add or remove information.
+- _Restart_: automatically shuts down the Minecraft server and tools and restarts the system. Sends warning messages to the Minecraft server at set periods of time (60 minutes until restart, 30 minutes, etc.). Restart and warning times can be easily modified.
+- _Backup_: the latest backup is stored for each day when the server is restarted or manually shut down. How many backups are kept around can be easily modified.
+- A service that can be enabled to automatically start the Minecraft server and tools when the system boots up.
 
 ## Requirements
+- A dedicated computer (Raspberry Pi, old latop, etc.)
 - A Linux distribution (headless is recommended)
 - Some packages: `sudo`, `gcc`, `make`, `screen`, `openjdk-[latest version]-jdk`
 - ssh is not required but highly recommended
