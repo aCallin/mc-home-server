@@ -28,4 +28,10 @@ Setup:
 
 From this point on, the Minecraft server and tools will run automatically in the background whenever the system boots. You can also use `systemctl [start / stop / status] mc-home-server` to manually start or stop the server and tools, or check its status. Use the system's IP address to join the Minecraft server or to check the output from the heartbeat program.
 
-## Appendix
+## Examples
+![heartbeat](https://github.com/aCallin/mc-home-server/assets/52753086/e566b9eb-dbe2-4fea-a2df-c432c036ddf7)  
+Heartbeat output  
+![restart](https://github.com/aCallin/mc-home-server/assets/52753086/3aa58bca-ff5e-4289-a37b-c2e653fdc0ce)  
+Restart warnings  
+![backup](https://github.com/aCallin/mc-home-server/assets/52753086/978bda76-326a-4a99-80c0-d68374e9e427)  
+Backups
